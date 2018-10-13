@@ -46,14 +46,18 @@ func main() {
 		panic(usage)
 	}
 
-	// ghq listして d/user/package のドメインが一致するものを持ってきて、cd して git configする
+	// directoris gotten by `ghq list`
 	repositories := []string{}
-	tmpRepositories, _ := exec.Command("ghq", "list").Output()
-	repositories = strings.Split(string(tmpRepositories), "\n")
-	matchedRepositories := []string{}
+	_tmpRepositories, _ := exec.Command("ghq", "list").Output()
+	repositories = strings.Split(string(_tmpRepositories), "\n")
+
+	// ghq root path
 	_ghqRoot, _ := exec.Command("ghq", "root").Output()
 	ghqRoot := string(_ghqRoot)
 	ghqRoot = strings.TrimRight(ghqRoot, "\n")
+
+	// directories matched the domain specified by the d option
+	matchedRepositories := []string{}
 	r := regexp.MustCompile(domain)
 	for _, repo := range repositories {
 		if r.MatchString(repo) {
@@ -72,7 +76,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	// ディレクトリの移動
 	prevDir, _ := filepath.Abs(".")
 	defer os.Chdir(prevDir)
 
