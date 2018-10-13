@@ -82,18 +82,21 @@ func main() {
 	for _, targetDir := range matchedRepositories {
 		err := os.Chdir(targetDir)
 		if err != nil {
+			fmt.Println("Error occurs when changing directory")
 			panic(err)
 		}
 
 		errUsername := exec.Command("git", "config", "--local", "user.name", username).Run()
 
 		if errUsername != nil {
+			fmt.Println("Error occurs when executing `git config --local user.name`")
 			panic(errUsername)
 		}
 
 		errEmail := exec.Command("git", "config", "--local", "user.email", email).Run()
 
 		if errEmail != nil {
+			fmt.Println("Error occurs when executing `git config --local user.email`")
 			panic(errEmail)
 		}
 	}
