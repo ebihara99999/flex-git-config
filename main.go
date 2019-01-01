@@ -1,17 +1,15 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 )
-
-var name = flag.String("name", "World", "A name to say hello to")
 
 var username string
 var email string
@@ -26,33 +24,29 @@ func init() {
 	flag.StringVar(&domain, "domain", "", "Set Github/GHE domain")
 	flag.StringVar(&domain, "d", "", "Set Github/GHE domain")
 	flag.BoolVar(&noop, "n", false, "noop")
-
 }
 
 func main() {
+	Run()
+}
+
+// Run is the main function
+func Run() {
 	flag.Parse()
 
-	// Check the args
-	usage := "Usage: hoge -u username -e email -d domain"
-	if username == "" {
-		panic(usage)
+	_, err := checkArgs()
+	if err != nil {
+		panic(err)
 	}
 
-	if email == "" {
-		panic(usage)
-	}
-
-	if domain == "" {
-		panic(usage)
-	}
+	c := Commander{}
 
 	// directoris gotten by `ghq list`
-	repositories := []string{}
-	_tmpRepositories, _ := exec.Command("ghq", "list").Output()
-	repositories = strings.Split(string(_tmpRepositories), "\n")
+	out, _ := c.GetRepositoriesByGhqList()
+	repositories := strings.Split(string(out), "\n")
 
 	// ghq root path
-	_ghqRoot, _ := exec.Command("ghq", "root").Output()
+	_ghqRoot, _ := c.GetGhqRoot()
 	ghqRoot := string(_ghqRoot)
 	ghqRoot = strings.TrimRight(ghqRoot, "\n")
 
@@ -86,18 +80,37 @@ func main() {
 			panic(err)
 		}
 
-		errUsername := exec.Command("git", "config", "--local", "user.name", username).Run()
+		_, errUsername := c.ChangeGitUsernameLocally(username)
 
 		if errUsername != nil {
 			fmt.Println("Error occurs when executing `git config --local user.name`")
 			panic(errUsername)
 		}
 
-		errEmail := exec.Command("git", "config", "--local", "user.email", email).Run()
+		_, errEmail := c.ChangeGitEmailLocally(email)
 
 		if errEmail != nil {
 			fmt.Println("Error occurs when executing `git config --local user.email`")
 			panic(errEmail)
 		}
 	}
+	fmt.Println("Successfully change git config")
 }
+
+func checkArgs() (result bool, err error) {
+	usage := "Usage: flex-git-config -u username -e email -d domain"
+	if username == "" {
+		return false, errors.New(usage)
+	}
+
+	if email == "" {
+		return false, errors.New(usage)
+	}
+
+	if domain == "" {
+		return false, errors.New(usage)
+	}
+	return true, nil
+}
+
+
