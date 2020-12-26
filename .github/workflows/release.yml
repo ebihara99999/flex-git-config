@@ -1,8 +1,5 @@
 name: Release Go Project Package
-on:
-  push:
-    tags:
-      - v*
+on: push
 
 jobs:
   test:
@@ -87,9 +84,8 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.arch }}
       run: |
-        mkdir dist
-        cp test.txt dist/
-        GOOS=$goos GOARCH=$goarch go build -v -o dist/app .
+        mkdir -p dist/$goarch-$goos
+        GOOS=$goos GOARCH=$goarch go build -v -o dist/fles-git-config .
         zip -j -r release dist
 
     - name: Download artifact to get url to upload to release
