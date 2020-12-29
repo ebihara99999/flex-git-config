@@ -129,7 +129,6 @@ type Commander struct {
 
 // GetRepositoriesByGhqList is
 func (c *Commander) GetRepositoriesByGhqList() ([]byte, error) {
-	fmt.Println("hogehogehogehogehogehogeho")
 	cmd := exec.Command("ghq", "list")
 	out, err := cmd.CombinedOutput()
 	return out, err
