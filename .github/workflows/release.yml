@@ -45,16 +45,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [mac64, lin64, win64]
+        os: [mac64, lin64]
         include:
         - os: mac64
           goos: darwin
           arch: amd64
         - os: lin64
           goos: linux
-          arch: amd64
-        - os: win64
-          goos: windows
           arch: amd64
 
     steps:
