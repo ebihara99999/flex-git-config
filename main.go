@@ -18,13 +18,13 @@ var domain string
 var noop bool
 
 func init() {
-	flag.StringVar(&username, "username", "", "Set Github/GHE username")
-	flag.StringVar(&username, "u", "", "Set Github/GHE username")
-	flag.StringVar(&email, "email", "", "Set Github/GHE email")
-	flag.StringVar(&email, "e", "", "Set Github/GHE email")
-	flag.StringVar(&domain, "domain", "", "Set Github/GHE domain")
-	flag.StringVar(&domain, "d", "", "Set Github/GHE domain")
-	flag.BoolVar(&noop, "n", false, "noop")
+	flag.StringVar(&username, "username", "", "Set the username used in the service domain pointed by -domain option")
+	flag.StringVar(&username, "u", "", "Set the username used in the service domain pointed by -domain option")
+	flag.StringVar(&email, "email", "", "Set the email used in the service domain pointed by -domain option")
+	flag.StringVar(&email, "e", "", "Set the email used in the service domain pointed by -domain option")
+	flag.StringVar(&domain, "domain", "", "Set a service domain like github.com or bitbucket.org. A self-hosted custom domain is also supported.")
+	flag.StringVar(&domain, "d", "", "Set a service domain like github.com or bitbucket.org. A self-hosted custom domain is also supported.")
+	flag.BoolVar(&noop, "n", false, "Noop option. Show the repositories that will be affected.")
 }
 
 func main() {
@@ -37,7 +37,8 @@ func Run() {
 
 	_, err := checkArgs()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	c := Commander{}
@@ -99,7 +100,7 @@ func Run() {
 }
 
 func checkArgs() (result bool, err error) {
-	usage := "Usage: flex-git-config -u username -e email -d domain"
+	usage := `Usage: flex-git-config -u username -e email -d domain; username, email and domain options are required.`
 	if username == "" {
 		return false, errors.New(usage)
 	}
@@ -129,7 +130,6 @@ type Commander struct {
 
 // GetRepositoriesByGhqList is
 func (c *Commander) GetRepositoriesByGhqList() ([]byte, error) {
-	fmt.Println("hogehogehogehogehogehogeho")
 	cmd := exec.Command("ghq", "list")
 	out, err := cmd.CombinedOutput()
 	return out, err
