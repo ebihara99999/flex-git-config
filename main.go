@@ -37,7 +37,8 @@ func Run() {
 
 	_, err := checkArgs()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	c := Commander{}
@@ -99,7 +100,7 @@ func Run() {
 }
 
 func checkArgs() (result bool, err error) {
-	usage := "Usage: flex-git-config -u username -e email -d domain"
+	usage := `Usage: flex-git-config -u username -e email -d domain; username, email and domain options are required.`
 	if username == "" {
 		return false, errors.New(usage)
 	}
