@@ -1,6 +1,8 @@
 # flex-git-config
 This enables to set git config every domain ( for now, email and username )
 
+Binary is [here](https://github.com/ebihara99999/flex-git-config/releases).
+
 ## Usage
 
 ```
